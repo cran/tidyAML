@@ -1,6 +1,6 @@
 Package: tidyAML
 Title: Automatic Machine Learning with 'tidymodels'
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: c(
     person("Steven","Sanderson", email = "spsanderson@gmail.com", role = c("aut","cre","cph"))
     )
@@ -18,8 +18,8 @@ Imports: magrittr, rlang (>= 0.4.11), purrr (>= 0.3.5), dplyr (>=
         1.0.10), rsample (>= 1.1.0), workflows (>= 1.1.2), forcats,
         workflowsets
 NeedsCompilation: no
-Packaged: 2023-02-15 14:05:41 UTC; steve
+Packaged: 2023-04-20 13:16:46 UTC; steve
 Author: Steven Sanderson [aut, cre, cph]
 Maintainer: Steven Sanderson <spsanderson@gmail.com>
 Repository: CRAN
-Date/Publication: 2023-02-16 12:30:02 UTC
+Date/Publication: 2023-04-20 13:40:02 UTC

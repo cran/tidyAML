@@ -4,8 +4,8 @@
 # tidyAML <img src="man/figures/logo.png" width="147" height="170" align="right" />
 
 <!-- badges: start -->
-<!-- [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/tidyAML)](https://cran.r-project.org/package=tidyAML) -->
 
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/tidyAML)](https://cran.r-project.org/package=tidyAML)
 ![](https://cranlogs.r-pkg.org/badges/tidyAML)
 ![](https://cranlogs.r-pkg.org/badges/grand-total/tidyAML) [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html##experimental)
@@ -49,11 +49,16 @@ easy name change suggestion.
 
 ## Installation
 
-You can install `{tidyAML}` like so (Not yet available on CRAN)
+You can install `{tidyAML}` like so:
 
 ``` r
-# Not yet on CRAN
-# install.packages("tidyAML")
+install.packages("tidyAML")
+#> Installing package into 'C:/Users/steve/AppData/Local/Temp/Rtmp6fnaQc/temp_libpath240429af4e9c'
+#> (as 'lib' is unspecified)
+#> package 'tidyAML' successfully unpacked and MD5 sums checked
+#> 
+#> The downloaded binary packages are in
+#>  C:\Users\steve\AppData\Local\Temp\Rtmpiac3aC\downloaded_packages
 ```
 
 Or the development version from GitHub
@@ -61,14 +66,18 @@ Or the development version from GitHub
 ``` r
 # install.packages("devtools")
 devtools::install_github("spsanderson/tidyAML")
+#> vctrs (0.6.1 -> 0.6.2) [CRAN]
+#> package 'vctrs' successfully unpacked and MD5 sums checked
 #> 
+#> The downloaded binary packages are in
+#>  C:\Users\steve\AppData\Local\Temp\Rtmpiac3aC\downloaded_packages
 #> ── R CMD build ─────────────────────────────────────────────────────────────────
-#>          checking for file 'C:\Users\steve\AppData\Local\Temp\RtmpcTQ0qQ\remotes20301fd86a70\spsanderson-tidyAML-4589656/DESCRIPTION' ...  ✔  checking for file 'C:\Users\steve\AppData\Local\Temp\RtmpcTQ0qQ\remotes20301fd86a70\spsanderson-tidyAML-4589656/DESCRIPTION'
-#>       ─  preparing 'tidyAML': (1.7s)
+#>       ✔  checking for file 'C:\Users\steve\AppData\Local\Temp\Rtmpiac3aC\remotes33d8c3536b0\spsanderson-tidyAML-de7b5bd/DESCRIPTION'
+#>       ─  preparing 'tidyAML': (1.9s)
 #>    checking DESCRIPTION meta-information ...     checking DESCRIPTION meta-information ...   ✔  checking DESCRIPTION meta-information
 #>       ─  checking for LF line-endings in source and make files and shell scripts
 #>       ─  checking for empty or unneeded directories
-#>       ─  building 'tidyAML_0.0.0.9002.tar.gz'
+#>       ─  building 'tidyAML_0.0.1.9000.tar.gz'
 #>      
 #> 
 ```
@@ -86,6 +95,7 @@ First let’s load the library
 ``` r
 library(tidyAML)
 #> Loading required package: parsnip
+#> Warning: package 'parsnip' was built under R version 4.2.3
 #> 
 #> == Welcome to tidyAML ===========================================================================
 #> If you find this package useful, please leave a star: 
@@ -265,7 +275,7 @@ glimpse(frt_tbl)
 #> $ model_spec      <list> [~NULL, ~NULL, NULL, regression, TRUE, NULL, lm, TRUE]…
 #> $ wflw            <list> [cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb, mp…
 #> $ fitted_wflw     <list> [cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb, mp…
-#> $ pred_wflw       <list> [<tbl_df[24 x 1]>], <NULL>, [<tbl_df[24 x 1]>]
+#> $ pred_wflw       <list> [<tbl_df[8 x 1]>], <NULL>, [<tbl_df[8 x 1]>]
 ```
 
 As we see above, one of the models has gracefully failed, thanks in part
@@ -277,37 +287,31 @@ Let’s look at the fitted workflow predictions.
 ``` r
 frt_tbl$pred_wflw
 #> [[1]]
-#> # A tibble: 24 × 1
-#>    .pred
-#>    <dbl>
-#>  1  23.9
-#>  2  31.2
-#>  3  15.4
-#>  4  15.5
-#>  5  11.3
-#>  6  27.1
-#>  7  17.8
-#>  8  32.3
-#>  9  28.1
-#> 10  17.6
-#> # … with 14 more rows
+#> # A tibble: 8 × 1
+#>   .pred
+#>   <dbl>
+#> 1 27.0 
+#> 2 25.9 
+#> 3 20.8 
+#> 4 17.5 
+#> 5  7.51
+#> 6 27.4 
+#> 7 32.5 
+#> 8 23.0 
 #> 
 #> [[2]]
 #> NULL
 #> 
 #> [[3]]
-#> # A tibble: 24 × 1
-#>    .pred
-#>    <dbl>
-#>  1  23.9
-#>  2  31.2
-#>  3  15.4
-#>  4  15.5
-#>  5  11.3
-#>  6  27.1
-#>  7  17.8
-#>  8  32.3
-#>  9  28.1
-#> 10  17.6
-#> # … with 14 more rows
+#> # A tibble: 8 × 1
+#>   .pred
+#>   <dbl>
+#> 1 27.0 
+#> 2 25.9 
+#> 3 20.8 
+#> 4 17.5 
+#> 5  7.51
+#> 6 27.4 
+#> 7 32.5 
+#> 8 23.0
 ```
