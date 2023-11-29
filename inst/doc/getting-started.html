@@ -340,18 +340,259 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyAML)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Loading required package: parsnip</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: package &#39;parsnip&#39; was built under R version 4.2.3</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; == Welcome to tidyAML ===========================================================================</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; If you find this package useful, please leave a star: </span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    https://github.com/spsanderson/tidyAML&#39;</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; If you encounter a bug or want to request an enhancement please file an issue at:</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    https://github.com/spsanderson/tidyAML/issues</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Thank you for using tidyAML!</span></span></code></pre></div>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>Welcome to <strong><code>{tidyAML}</code></strong> which is a new R
+package that makes it easy to use the <code>tidymodels</code> ecosystem
+to perform automated machine learning (AutoML). This package provides a
+simple and intuitive interface that allows users to quickly generate
+machine learning models without worrying about the underlying details.
+It also includes a safety mechanism that ensures that the package will
+fail gracefully if any required extension packages are not installed on
+the user’s machine. With <code>{tidyAML}</code>, users can easily build
+high-quality machine learning models in just a few lines of code.
+Whether you are a beginner or an experienced machine learning
+practitioner, <code>{tidyAML}</code> has something to offer.</p>
+<p>Some ideas are that we should be able to generate regression models
+on the fly without having to actually go through the process of building
+the specification, especially if it is a non-tuning model, meaning we
+are not planing on tuning hyper-parameters like <code>penalty</code> and
+<code>cost</code>.</p>
+<p>The idea is not to re-write the excellent work the
+<code>tidymodels</code> team has done (because it’s not possible) but
+rather to try and make an enhanced easy to use set of functions that do
+what they say and can generate many models and predictions at once.</p>
+<p>This is similar to the great <code>h2o</code> package, but,
+<code>{tidyAML}</code> does not require java to be setup properly like
+<code>h2o</code> because <code>{tidyAML}</code> is built on
+<code>tidymodels</code>.</p>
+</div>
+<div id="thanks" class="section level2">
+<h2>Thanks</h2>
+<p>Thank you <a href="https://fosstodon.org/@grrrck/109479826278916014">Garrick
+Aden-Buie</a> for the easy name change suggestion.</p>
+</div>
+<div id="installation" class="section level2">
+<h2>Installation</h2>
+<p>You can install <code>{tidyAML}</code> like so:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;tidyAML&quot;</span>)</span></code></pre></div>
+<p>Or the development version from GitHub</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># install.packages(&quot;devtools&quot;)  </span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;spsanderson/tidyAML&quot;</span>)</span></code></pre></div>
+</div>
+<div id="examples" class="section level2">
+<h2>Examples</h2>
+<p>Part of the reason to use <code>{tidyAML}</code> is so that you can
+generate many models of your data set. One way of modeling a data set is
+using regression for some numeric output. There is a convienent function
+in <strong>tidyAML</strong> that will generate a set of non-tuning
+models for <em>fast regression</em>. Let’s take a look below.</p>
+<p>First let’s load the library</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">library</span>(tidyAML)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co">#&gt; Loading required package: parsnip</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co">#&gt; Warning: package &#39;parsnip&#39; was built under R version 4.2.3</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; == Welcome to tidyAML ===========================================================================</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; If you find this package useful, please leave a star: </span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co">#&gt;    https://github.com/spsanderson/tidyAML&#39;</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt; If you encounter a bug or want to request an enhancement please file an issue at:</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt;    https://github.com/spsanderson/tidyAML/issues</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; It is suggested that you run tidymodels::tidymodel_prefer() to set the defaults for your session.</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; Thank you for using tidyAML!</span></span></code></pre></div>
+<p>Now lets see the function in action.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">fast_regression_parsnip_spec_tbl</span>(<span class="at">.parsnip_fns =</span> <span class="st">&quot;linear_reg&quot;</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 11 × 5</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt;    .model_id .parsnip_engine .parsnip_mode .parsnip_fns model_spec</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co">#&gt;        &lt;int&gt; &lt;chr&gt;           &lt;chr&gt;         &lt;chr&gt;        &lt;list&gt;    </span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt;  1         1 lm              regression    linear_reg   &lt;spec[+]&gt; </span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt;  2         2 brulee          regression    linear_reg   &lt;spec[+]&gt; </span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt;  3         3 gee             regression    linear_reg   &lt;spec[+]&gt; </span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co">#&gt;  4         4 glm             regression    linear_reg   &lt;spec[+]&gt; </span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt;  5         5 glmer           regression    linear_reg   &lt;spec[+]&gt; </span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt;  6         6 glmnet          regression    linear_reg   &lt;spec[+]&gt; </span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt;  7         7 gls             regression    linear_reg   &lt;spec[+]&gt; </span></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co">#&gt;  8         8 lme             regression    linear_reg   &lt;spec[+]&gt; </span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co">#&gt;  9         9 lmer            regression    linear_reg   &lt;spec[+]&gt; </span></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#&gt; 10        10 stan            regression    linear_reg   &lt;spec[+]&gt; </span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#&gt; 11        11 stan_glmer      regression    linear_reg   &lt;spec[+]&gt;</span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="fu">fast_regression_parsnip_spec_tbl</span>(<span class="at">.parsnip_eng =</span> <span class="fu">c</span>(<span class="st">&quot;lm&quot;</span>,<span class="st">&quot;glm&quot;</span>))</span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 × 5</span></span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a><span class="co">#&gt;   .model_id .parsnip_engine .parsnip_mode .parsnip_fns model_spec</span></span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a><span class="co">#&gt;       &lt;int&gt; &lt;chr&gt;           &lt;chr&gt;         &lt;chr&gt;        &lt;list&gt;    </span></span>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a><span class="co">#&gt; 1         1 lm              regression    linear_reg   &lt;spec[+]&gt; </span></span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a><span class="co">#&gt; 2         2 glm             regression    linear_reg   &lt;spec[+]&gt; </span></span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a><span class="co">#&gt; 3         3 glm             regression    poisson_reg  &lt;spec[+]&gt;</span></span>
+<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a><span class="fu">fast_regression_parsnip_spec_tbl</span>(<span class="at">.parsnip_eng =</span> <span class="fu">c</span>(<span class="st">&quot;lm&quot;</span>,<span class="st">&quot;glm&quot;</span>,<span class="st">&quot;gee&quot;</span>), </span>
+<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a>                                 <span class="at">.parsnip_fns =</span> <span class="st">&quot;linear_reg&quot;</span>)</span>
+<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 × 5</span></span>
+<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a><span class="co">#&gt;   .model_id .parsnip_engine .parsnip_mode .parsnip_fns model_spec</span></span>
+<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a><span class="co">#&gt;       &lt;int&gt; &lt;chr&gt;           &lt;chr&gt;         &lt;chr&gt;        &lt;list&gt;    </span></span>
+<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a><span class="co">#&gt; 1         1 lm              regression    linear_reg   &lt;spec[+]&gt; </span></span>
+<span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a><span class="co">#&gt; 2         2 gee             regression    linear_reg   &lt;spec[+]&gt; </span></span>
+<span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a><span class="co">#&gt; 3         3 glm             regression    linear_reg   &lt;spec[+]&gt;</span></span></code></pre></div>
+<p>As shown we can easily select the models we want either by choosing
+the supported <code>parsnip</code> function like
+<code>linear_reg()</code> or by choose the desired <code>engine</code>,
+you can also use them both in conjunction with each other!</p>
+<p>This function also does add a class to the output. Let’s see it.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">class</span>(<span class="fu">fast_regression_parsnip_spec_tbl</span>())</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co">#&gt; [1] &quot;tidyaml_mod_spec_tbl&quot; &quot;fst_reg_spec_tbl&quot;     &quot;tidyaml_base_tbl&quot;    </span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#&gt; [4] &quot;tbl_df&quot;               &quot;tbl&quot;                  &quot;data.frame&quot;</span></span></code></pre></div>
+<p>We see that there are two added classes, first
+<code>fst_reg_spec_tbl</code> because this creates a set of non-tuning
+regression models and then <code>tidyaml_mod_spec_tbl</code> because
+this is a model specification tibble built with
+<code>{tidyAML}</code></p>
+<p>Now, what if you want to create a non-tuning model spec without using
+the <code>fast_regression_parsnip_spec_tbl()</code> function. Well, you
+can. The function is called <code>create_model_spec()</code>.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">create_model_spec</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a> <span class="at">.parsnip_eng =</span> <span class="fu">list</span>(<span class="st">&quot;lm&quot;</span>,<span class="st">&quot;glm&quot;</span>,<span class="st">&quot;glmnet&quot;</span>,<span class="st">&quot;cubist&quot;</span>),</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a> <span class="at">.parsnip_fns =</span> <span class="fu">list</span>(</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>      <span class="st">&quot;linear_reg&quot;</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>      <span class="st">&quot;linear_reg&quot;</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>      <span class="st">&quot;linear_reg&quot;</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>      <span class="st">&quot;cubist_rules&quot;</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>     )</span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a> )</span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="co">#&gt; # A tibble: 4 × 4</span></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="co">#&gt;   .parsnip_engine .parsnip_mode .parsnip_fns .model_spec</span></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;           &lt;chr&gt;         &lt;chr&gt;        &lt;list&gt;     </span></span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="co">#&gt; 1 lm              regression    linear_reg   &lt;spec[+]&gt;  </span></span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a><span class="co">#&gt; 2 glm             regression    linear_reg   &lt;spec[+]&gt;  </span></span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="co">#&gt; 3 glmnet          regression    linear_reg   &lt;spec[+]&gt;  </span></span>
+<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a><span class="co">#&gt; 4 cubist          regression    cubist_rules &lt;spec[+]&gt;</span></span>
+<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a></span>
+<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a><span class="fu">create_model_spec</span>(</span>
+<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a> <span class="at">.parsnip_eng =</span> <span class="fu">list</span>(<span class="st">&quot;lm&quot;</span>,<span class="st">&quot;glm&quot;</span>,<span class="st">&quot;glmnet&quot;</span>,<span class="st">&quot;cubist&quot;</span>),</span>
+<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a> <span class="at">.parsnip_fns =</span> <span class="fu">list</span>(</span>
+<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a>      <span class="st">&quot;linear_reg&quot;</span>,</span>
+<span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a>      <span class="st">&quot;linear_reg&quot;</span>,</span>
+<span id="cb6-23"><a href="#cb6-23" tabindex="-1"></a>      <span class="st">&quot;linear_reg&quot;</span>,</span>
+<span id="cb6-24"><a href="#cb6-24" tabindex="-1"></a>      <span class="st">&quot;cubist_rules&quot;</span></span>
+<span id="cb6-25"><a href="#cb6-25" tabindex="-1"></a>     ),</span>
+<span id="cb6-26"><a href="#cb6-26" tabindex="-1"></a> <span class="at">.return_tibble =</span> <span class="cn">FALSE</span></span>
+<span id="cb6-27"><a href="#cb6-27" tabindex="-1"></a> )</span>
+<span id="cb6-28"><a href="#cb6-28" tabindex="-1"></a><span class="co">#&gt; $.parsnip_engine</span></span>
+<span id="cb6-29"><a href="#cb6-29" tabindex="-1"></a><span class="co">#&gt; $.parsnip_engine[[1]]</span></span>
+<span id="cb6-30"><a href="#cb6-30" tabindex="-1"></a><span class="co">#&gt; [1] &quot;lm&quot;</span></span>
+<span id="cb6-31"><a href="#cb6-31" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-32"><a href="#cb6-32" tabindex="-1"></a><span class="co">#&gt; $.parsnip_engine[[2]]</span></span>
+<span id="cb6-33"><a href="#cb6-33" tabindex="-1"></a><span class="co">#&gt; [1] &quot;glm&quot;</span></span>
+<span id="cb6-34"><a href="#cb6-34" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-35"><a href="#cb6-35" tabindex="-1"></a><span class="co">#&gt; $.parsnip_engine[[3]]</span></span>
+<span id="cb6-36"><a href="#cb6-36" tabindex="-1"></a><span class="co">#&gt; [1] &quot;glmnet&quot;</span></span>
+<span id="cb6-37"><a href="#cb6-37" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-38"><a href="#cb6-38" tabindex="-1"></a><span class="co">#&gt; $.parsnip_engine[[4]]</span></span>
+<span id="cb6-39"><a href="#cb6-39" tabindex="-1"></a><span class="co">#&gt; [1] &quot;cubist&quot;</span></span>
+<span id="cb6-40"><a href="#cb6-40" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-41"><a href="#cb6-41" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-42"><a href="#cb6-42" tabindex="-1"></a><span class="co">#&gt; $.parsnip_mode</span></span>
+<span id="cb6-43"><a href="#cb6-43" tabindex="-1"></a><span class="co">#&gt; $.parsnip_mode[[1]]</span></span>
+<span id="cb6-44"><a href="#cb6-44" tabindex="-1"></a><span class="co">#&gt; [1] &quot;regression&quot;</span></span>
+<span id="cb6-45"><a href="#cb6-45" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-46"><a href="#cb6-46" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-47"><a href="#cb6-47" tabindex="-1"></a><span class="co">#&gt; $.parsnip_fns</span></span>
+<span id="cb6-48"><a href="#cb6-48" tabindex="-1"></a><span class="co">#&gt; $.parsnip_fns[[1]]</span></span>
+<span id="cb6-49"><a href="#cb6-49" tabindex="-1"></a><span class="co">#&gt; [1] &quot;linear_reg&quot;</span></span>
+<span id="cb6-50"><a href="#cb6-50" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-51"><a href="#cb6-51" tabindex="-1"></a><span class="co">#&gt; $.parsnip_fns[[2]]</span></span>
+<span id="cb6-52"><a href="#cb6-52" tabindex="-1"></a><span class="co">#&gt; [1] &quot;linear_reg&quot;</span></span>
+<span id="cb6-53"><a href="#cb6-53" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-54"><a href="#cb6-54" tabindex="-1"></a><span class="co">#&gt; $.parsnip_fns[[3]]</span></span>
+<span id="cb6-55"><a href="#cb6-55" tabindex="-1"></a><span class="co">#&gt; [1] &quot;linear_reg&quot;</span></span>
+<span id="cb6-56"><a href="#cb6-56" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-57"><a href="#cb6-57" tabindex="-1"></a><span class="co">#&gt; $.parsnip_fns[[4]]</span></span>
+<span id="cb6-58"><a href="#cb6-58" tabindex="-1"></a><span class="co">#&gt; [1] &quot;cubist_rules&quot;</span></span>
+<span id="cb6-59"><a href="#cb6-59" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-60"><a href="#cb6-60" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-61"><a href="#cb6-61" tabindex="-1"></a><span class="co">#&gt; $.model_spec</span></span>
+<span id="cb6-62"><a href="#cb6-62" tabindex="-1"></a><span class="co">#&gt; $.model_spec[[1]]</span></span>
+<span id="cb6-63"><a href="#cb6-63" tabindex="-1"></a><span class="co">#&gt; Linear Regression Model Specification (regression)</span></span>
+<span id="cb6-64"><a href="#cb6-64" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-65"><a href="#cb6-65" tabindex="-1"></a><span class="co">#&gt; Computational engine: lm </span></span>
+<span id="cb6-66"><a href="#cb6-66" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-67"><a href="#cb6-67" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-68"><a href="#cb6-68" tabindex="-1"></a><span class="co">#&gt; $.model_spec[[2]]</span></span>
+<span id="cb6-69"><a href="#cb6-69" tabindex="-1"></a><span class="co">#&gt; Linear Regression Model Specification (regression)</span></span>
+<span id="cb6-70"><a href="#cb6-70" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-71"><a href="#cb6-71" tabindex="-1"></a><span class="co">#&gt; Computational engine: glm </span></span>
+<span id="cb6-72"><a href="#cb6-72" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-73"><a href="#cb6-73" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-74"><a href="#cb6-74" tabindex="-1"></a><span class="co">#&gt; $.model_spec[[3]]</span></span>
+<span id="cb6-75"><a href="#cb6-75" tabindex="-1"></a><span class="co">#&gt; Linear Regression Model Specification (regression)</span></span>
+<span id="cb6-76"><a href="#cb6-76" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-77"><a href="#cb6-77" tabindex="-1"></a><span class="co">#&gt; Computational engine: glmnet </span></span>
+<span id="cb6-78"><a href="#cb6-78" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-79"><a href="#cb6-79" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-80"><a href="#cb6-80" tabindex="-1"></a><span class="co">#&gt; $.model_spec[[4]]</span></span>
+<span id="cb6-81"><a href="#cb6-81" tabindex="-1"></a><span class="co">#&gt; ! parsnip could not locate an implementation for `cubist_rules` regression</span></span>
+<span id="cb6-82"><a href="#cb6-82" tabindex="-1"></a><span class="co">#&gt;   model specifications using the `cubist` engine.</span></span>
+<span id="cb6-83"><a href="#cb6-83" tabindex="-1"></a><span class="co">#&gt; Cubist Model Specification (regression)</span></span>
+<span id="cb6-84"><a href="#cb6-84" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-85"><a href="#cb6-85" tabindex="-1"></a><span class="co">#&gt; Computational engine: cubist</span></span></code></pre></div>
+<p>Now the reason we are here. Let’s take a look at the first function
+for modeling with <code>{tidyAML}</code>,
+<strong><code>fast_regression()</code></strong>.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">library</span>(recipes)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>rec_obj <span class="ot">&lt;-</span> <span class="fu">recipe</span>(mpg <span class="sc">~</span> ., <span class="at">data =</span> mtcars)</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>frt_tbl <span class="ot">&lt;-</span> <span class="fu">fast_regression</span>(</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>  <span class="at">.data =</span> mtcars, </span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>  <span class="at">.rec_obj =</span> rec_obj, </span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>  <span class="at">.parsnip_eng =</span> <span class="fu">c</span>(<span class="st">&quot;lm&quot;</span>,<span class="st">&quot;glm&quot;</span>,<span class="st">&quot;gee&quot;</span>),</span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>  <span class="at">.parsnip_fns =</span> <span class="st">&quot;linear_reg&quot;</span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>)</span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="fu">glimpse</span>(frt_tbl)</span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="co">#&gt; Rows: 3</span></span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="co">#&gt; Columns: 8</span></span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="co">#&gt; $ .model_id       &lt;int&gt; 1, 2, 3</span></span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a><span class="co">#&gt; $ .parsnip_engine &lt;chr&gt; &quot;lm&quot;, &quot;gee&quot;, &quot;glm&quot;</span></span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a><span class="co">#&gt; $ .parsnip_mode   &lt;chr&gt; &quot;regression&quot;, &quot;regression&quot;, &quot;regression&quot;</span></span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a><span class="co">#&gt; $ .parsnip_fns    &lt;chr&gt; &quot;linear_reg&quot;, &quot;linear_reg&quot;, &quot;linear_reg&quot;</span></span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a><span class="co">#&gt; $ model_spec      &lt;list&gt; [~NULL, ~NULL, NULL, regression, TRUE, NULL, lm, TRUE]…</span></span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a><span class="co">#&gt; $ wflw            &lt;list&gt; [cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb, mp…</span></span>
+<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a><span class="co">#&gt; $ fitted_wflw     &lt;list&gt; [cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb, mp…</span></span>
+<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a><span class="co">#&gt; $ pred_wflw       &lt;list&gt; [&lt;tbl_df[8 x 1]&gt;], &lt;NULL&gt;, [&lt;tbl_df[8 x 1]&gt;]</span></span></code></pre></div>
+<p>As we see above, one of the models has gracefully failed, thanks in
+part to the function <code>purrr::safely()</code>, which was used to
+make what I call <strong>safe_make</strong> functions.</p>
+<p>Let’s look at the fitted workflow predictions.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>frt_tbl<span class="sc">$</span>pred_wflw</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="co">#&gt; [[1]]</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="co">#&gt; # A tibble: 8 × 1</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="co">#&gt;   .pred</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co">#&gt;   &lt;dbl&gt;</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co">#&gt; 1 20.8 </span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="co">#&gt; 2 12.2 </span></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co">#&gt; 3 15.0 </span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="co">#&gt; 4  8.29</span></span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a><span class="co">#&gt; 5  7.58</span></span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a><span class="co">#&gt; 6 10.5 </span></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="co">#&gt; 7 16.2 </span></span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a><span class="co">#&gt; 8 21.7 </span></span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a><span class="co">#&gt; [[2]]</span></span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a><span class="co">#&gt; NULL</span></span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a><span class="co">#&gt; [[3]]</span></span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a><span class="co">#&gt; # A tibble: 8 × 1</span></span>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a><span class="co">#&gt;   .pred</span></span>
+<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a><span class="co">#&gt;   &lt;dbl&gt;</span></span>
+<span id="cb8-22"><a href="#cb8-22" tabindex="-1"></a><span class="co">#&gt; 1 20.8 </span></span>
+<span id="cb8-23"><a href="#cb8-23" tabindex="-1"></a><span class="co">#&gt; 2 12.2 </span></span>
+<span id="cb8-24"><a href="#cb8-24" tabindex="-1"></a><span class="co">#&gt; 3 15.0 </span></span>
+<span id="cb8-25"><a href="#cb8-25" tabindex="-1"></a><span class="co">#&gt; 4  8.29</span></span>
+<span id="cb8-26"><a href="#cb8-26" tabindex="-1"></a><span class="co">#&gt; 5  7.58</span></span>
+<span id="cb8-27"><a href="#cb8-27" tabindex="-1"></a><span class="co">#&gt; 6 10.5 </span></span>
+<span id="cb8-28"><a href="#cb8-28" tabindex="-1"></a><span class="co">#&gt; 7 16.2 </span></span>
+<span id="cb8-29"><a href="#cb8-29" tabindex="-1"></a><span class="co">#&gt; 8 21.7</span></span></code></pre></div>
+</div>
 
 
 

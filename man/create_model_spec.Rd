@@ -14,13 +14,13 @@ create_model_spec(
 \arguments{
 \item{.parsnip_eng}{The input must be a list. The default for this is set to \code{all}. This means that all
 of the parsnip \strong{linear regression engines} will be used, for example \code{lm}, or
-\code{glm}. You can also choose to pass a c() vector like \code{c('lm', 'glm')}}
+\code{glm}.}
 
 \item{.mode}{The input must be a list. The default is 'regression'}
 
 \item{.parsnip_fns}{The input must be a list. The default for this is set to \code{all}. This means that all
 of the parsnip \strong{linear regression} functions will be used, for example \code{linear_reg()},
-or \code{cubist_rules}. You can also choose to pass a c() vector like \code{c("linear_reg","cubist_rules")}}
+or \code{cubist_rules}.}
 
 \item{.return_tibble}{The default is TRUE. FALSE will return a list object.}
 }
@@ -39,18 +39,16 @@ choose that is supported by the \code{parsnip} ecosystem.
 create_model_spec(
  .parsnip_eng = list("lm","glm","glmnet","cubist"),
  .parsnip_fns = list(
-      rep(
-        "linear_reg", 3),
-        "cubist_rules"
+      "linear_reg","linear_reg","linear_reg",
+      "cubist_rules"
      )
  )
 
 create_model_spec(
  .parsnip_eng = list("lm","glm","glmnet","cubist"),
  .parsnip_fns = list(
-      rep(
-        "linear_reg", 3),
-        "cubist_rules"
+      "linear_reg","linear_reg","linear_reg",
+      "cubist_rules"
      ),
  .return_tibble = FALSE
  )

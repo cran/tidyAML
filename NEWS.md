@@ -1,3 +1,31 @@
+# tidyAML 0.0.3
+
+## Breaking Changes
+1. Fix #150 - Require R version >= 4.1.0 in order to use the native pipe.
+2. Fix #170 - Drop `magrittr` from `Imports` of `DESCRIPTION` file from #150.
+
+## New Features
+1. Fix #157 - `internal_make_spec_tbl()` now adds a class to each `model_spec`
+created by `parsnip`, for example, a `gee` engine setting using `linear_reg()` 
+will return an extra class of `gee_linear_reg`
+2. Fix #175 - Add Getting Started Vignette.
+
+## Minor Fixes and Improvements
+1. Fix #142 - Add `gee`, `glmnet`, and `rules` to the `core_packages()` function.
+2. Fix #148 - Update `create_model_spec()`
+3. Fix #155 - Add class `tidyaml_base_tbl` to the output of `create_model_spec()`
+4. Fix #156 - Update `internal_set_args_to_tune()` to use `dplyr::pick()` instead 
+of `dplyr::cur_data()` since it was deprecated.
+5. Fix #161 - Update `internal_set_args_to_tune()` to use `!names(new_mod_args)`
+instead of `!names(.)`
+6. Fix #163 - Add attribute to model spec and drop class from #155
+7. Fix #147 - Add packages to suggests, as they are not necessary for the pkg to work.
+8. Fix #139 - Add suggestion to startup message to run `tidymodels::tidymodels_prefer()`
+9. Fix #167 - Add function `internal_make_wflw_gee_lin_reg()`
+10. Fix #168 - Add function `full_internal_make_wflw`
+11. Fix #169 - Update `fast_classification()` and `fast_regression()` to use
+`full_internal_make_wflw()`
+
 # tidyAML 0.0.2
 
 ## Breaking Changes

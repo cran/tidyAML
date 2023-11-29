@@ -28,7 +28,7 @@ library(dplyr)
 mod_tbl <- fast_regression_parsnip_spec_tbl()
 mod_tbl$model_spec[[1]]
 
-updated_mod_tbl <- mod_tbl \%>\%
+updated_mod_tbl <- mod_tbl |>
   mutate(model_spec = internal_set_args_to_tune(mod_tbl))
 updated_mod_tbl$model_spec[[1]]
 
@@ -37,6 +37,7 @@ updated_mod_tbl$model_spec[[1]]
 Other Internals: 
 \code{\link{internal_make_fitted_wflw}()},
 \code{\link{internal_make_spec_tbl}()},
+\code{\link{internal_make_wflw_gee_lin_reg}()},
 \code{\link{internal_make_wflw_predictions}()},
 \code{\link{internal_make_wflw}()},
 \code{\link{make_classification_base_tbl}()},
