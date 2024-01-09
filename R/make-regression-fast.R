@@ -19,15 +19,20 @@
 #' split supported by `rsample`
 #' @param .split_args The default is NULL, when NULL then the default parameters
 #' of the split type will be executed for the rsample split type.
+#' @param .drop_na The default is TRUE, which will drop all NA's from the data.
 #'
 #' @examples
 #' library(recipes, quietly = TRUE)
-#' library(dplyr, quietly = TRUE)
 #'
 #' rec_obj <- recipe(mpg ~ ., data = mtcars)
-#' frt_tbl <- fast_regression(mtcars, rec_obj, .parsnip_eng = c("lm","glm"),
-#' .parsnip_fns = "linear_reg")
-#' glimpse(frt_tbl)
+#' frt_tbl <- fast_regression(
+#'   mtcars,
+#'   rec_obj,
+#'   .parsnip_eng = c("lm","glm","gee"),
+#'   .parsnip_fns = "linear_reg"
+#'   )
+#'
+#' frt_tbl
 #'
 #' @return
 #' A list or a tibble.
@@ -41,7 +46,7 @@ NULL
 
 fast_regression <- function(.data, .rec_obj, .parsnip_fns = "all",
                             .parsnip_eng = "all", .split_type = "initial_split",
-                            .split_args = NULL){
+                            .split_args = NULL, .drop_na = TRUE){
 
   # Tidy Eval ----
   call <- list(.parsnip_fns) |>
@@ -85,13 +90,17 @@ fast_regression <- function(.data, .rec_obj, .parsnip_fns = "all",
       pred_wflw = internal_make_wflw_predictions(mod_fitted_tbl, splits_obj)
     )
 
+  if (.drop_na){
+    mod_pred_tbl <- mod_pred_tbl[!sapply(mod_pred_tbl$fitted_wflw, function(x) length(x) == 0), ]
+  }
 
   # Return ----
-  class(mod_tbl) <- c("fst_reg_tbl", class(mod_tbl))
-  attr(mod_tbl, ".parsnip_engines") <- .parsnip_eng
-  attr(mod_tbl, ".parsnip_functions") <- .parsnip_fns
-  attr(mod_tbl, ".split_type") <- .split_type
-  attr(mod_tbl, ".split_args") <- .split_args
+  class(mod_pred_tbl) <- c("fst_reg_tbl", class(mod_pred_tbl))
+  attr(mod_pred_tbl, ".parsnip_engines") <- .parsnip_eng
+  attr(mod_pred_tbl, ".parsnip_functions") <- .parsnip_fns
+  attr(mod_pred_tbl, ".split_type") <- .split_type
+  attr(mod_pred_tbl, ".split_args") <- .split_args
+  attr(mod_pred_tbl, ".drop_na") <- .drop_na
 
   return(mod_pred_tbl)
 }

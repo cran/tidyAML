@@ -1,3 +1,27 @@
+# tidyAML 0.0.4
+
+## Breaking Changes
+None
+
+## New Features
+1. Fix #187 and #198 - Add function `extract_regression_residuals()`
+2. Fix #199 - Add parameters `.drop_na` to `fast_classification()` and 
+`fast_regression()`.
+
+## Minor Fixes and Improvements
+1. Fix #186 - Add the following to the core_packages():
+    * `discrim`
+    * `mda`
+    * `sda`
+    * `sparsediscrim`
+    * `liquidSVM`
+    * `kernlab`
+    * `klaR`
+2. Fix #190 - Update the `internal_make_wflw_predictions()` to include all data
+    * The actual data
+    * The training predictions
+    * The testing predictions
+
 # tidyAML 0.0.3
 
 ## Breaking Changes

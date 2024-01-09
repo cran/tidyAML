@@ -17,10 +17,9 @@
 #'
 #' @examples
 #' library(recipes, quietly = TRUE)
-#' library(dplyr, quietly = TRUE)
 #'
 #' mod_spec_tbl <- fast_regression_parsnip_spec_tbl(
-#'   .parsnip_eng = c("lm","glm","gee"),
+#'   .parsnip_eng = c("lm","glm"),
 #'   .parsnip_fns = "linear_reg"
 #' )
 #'
@@ -28,7 +27,7 @@
 #' splits_obj <- create_splits(mtcars, "initial_split")
 #'
 #' mod_tbl <- mod_spec_tbl |>
-#'   mutate(wflw = internal_make_wflw(mod_spec_tbl, rec_obj))
+#'   mutate(wflw = full_internal_make_wflw(mod_spec_tbl, rec_obj))
 #'
 #' mod_fitted_tbl <- mod_tbl |>
 #'   mutate(fitted_wflw = internal_make_fitted_wflw(mod_tbl, splits_obj))
@@ -36,7 +35,18 @@
 #' internal_make_wflw_predictions(mod_fitted_tbl, splits_obj)
 #'
 #' @return
-#' A list object of workflows.
+#' A list object tibble of the outcome variable and it's values along with the
+#' testing and training predictions in a single tibble.
+#'
+#' | .data_category | .data_type | .value |
+#' |----------------|------------|--------|
+#' | actual         | actual     | 21.0   |
+#' | actual         | actual     | 21.0   |
+#' | actual         | actual     | 22.8   |
+#' | ...            | ...        | ...    |
+#' | predicted      | training   | 21.0   |
+#' | ...            | ...        | ...    |
+#' | predicted      | training   | 21.0   |
 #'
 #' @name internal_make_wflw_predictions
 NULL
@@ -90,6 +100,9 @@ internal_make_wflw_predictions <- function(.model_tbl, .splits_obj){
         # Pull the fitted workflow column and then pluck it
         fitted_wflw = obj |> dplyr::pull(7) |> purrr::pluck(1)
 
+        # Get rec_obj
+        # rec_obj <- workflows::extract_preprocessor(fitted_wflw)
+
         # Create a safe stats::predict
         safe_stats_predict <- purrr::safely(
           stats::predict,
@@ -103,9 +116,44 @@ internal_make_wflw_predictions <- function(.model_tbl, .splits_obj){
           new_data = rsample::testing(splits_obj$splits)
         )
 
-        res <- ret |> purrr::pluck("result")
+        if (!is.null(ret$error)) {
+          message(stringr::str_glue("{ret$error}"))
+          res <- NULL
+          return(res)
+        }
 
-        if (!is.null(ret$error)) message(stringr::str_glue("{ret$error}"))
+        # Get testing predictions
+        test_res <- ret |> purrr::pluck("result")
+        pred_col_nm <- names(test_res)
+        test_res <- test_res |>
+          dplyr::mutate(.data_type = "testing") |>
+          dplyr::select(.data_type, !!pred_col_nm) |>
+          purrr::set_names(c(".data_type", ".value"))
+
+        # Get training predictions
+        train_res <- fitted_wflw |>
+          broom::augment(new_data = rsample::training(splits_obj$splits)) |>
+          dplyr::mutate(.data_type = "training") |>
+          dplyr::select(.data_type, !!pred_col_nm) |>
+          purrr::set_names(c(".data_type", ".value"))
+
+        # Get actual outcome values
+        pred_y <- names(fitted_wflw[["pre"]][["mold"]][["outcomes"]])
+        train_act <- rsample::training(splits_obj$splits)[,pred_y] |>
+          dplyr::as_tibble() |>
+          purrr::set_names(pred_y)
+        test_act <- rsample::testing(splits_obj$splits)[,pred_y] |>
+          dplyr::as_tibble() |>
+          purrr::set_names(pred_y)
+        actual_res <- rbind(train_act, test_act) |>
+          dplyr::mutate(.data_type = "actual") |>
+          purrr::set_names("value", ".data_type") |>
+          dplyr::select(.data_type, value) |>
+          purrr::set_names(c(".data_type", ".value"))
+
+        res <- base::rbind(actual_res, train_res, test_res) |>
+          dplyr::mutate(.data_category = ifelse(.data_type == "actual", "actual", "predicted")) |>
+          dplyr::select(.data_category, .data_type, .value)
 
         return(res)
       }

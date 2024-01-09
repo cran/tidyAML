@@ -10,7 +10,8 @@ fast_classification(
   .parsnip_fns = "all",
   .parsnip_eng = "all",
   .split_type = "initial_split",
-  .split_args = NULL
+  .split_args = NULL,
+  .drop_na = TRUE
 )
 }
 \arguments{
@@ -29,6 +30,8 @@ split supported by \code{rsample}}
 
 \item{.split_args}{The default is NULL, when NULL then the default parameters
 of the split type will be executed for the rsample split type.}
+
+\item{.drop_na}{The default is TRUE, which will drop all NA's from the data.}
 }
 \value{
 A list or a tibble.
@@ -43,18 +46,24 @@ explicitly with \code{step_string2factor()} it is encouraged to mutate your pred
 into a factor before you create your recipe.
 }
 \examples{
-library(recipes, quietly = TRUE)
-library(dplyr, quietly = TRUE)
+library(recipes)
+library(dplyr)
+library(tidyr)
 
-df <- mtcars |> mutate(cyl = as.factor(cyl))
-rec_obj <- recipe(cyl ~ ., data = df)
+df <- Titanic |>
+ as_tibble() |>
+ uncount(n) |>
+ mutate(across(everything(), as.factor))
+
+rec_obj <- recipe(Survived ~ ., data = df)
 
 fct_tbl <- fast_classification(
   .data = df,
   .rec_obj = rec_obj,
-  .parsnip_eng = c("glm","LiblineaR"))
+  .parsnip_eng = c("glm","earth")
+  )
 
-glimpse(fct_tbl)
+fct_tbl
 
 }
 \seealso{
