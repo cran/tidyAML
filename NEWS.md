@@ -1,3 +1,18 @@
+# tidyAML 0.0.5
+
+## Breaking Changes
+None
+
+## New Features
+1. Fix #217 - Add function `plot_regression_residuals()` to plot the residuals.
+2. Fix #215 - Add function `plot_regression_predictions()` to plot the predictions
+from the function `extract_wflw_predictions()`
+
+## Minor Fixes and Improvements
+1. Fix #214 - Drop selection message from `load_deps()`
+2. Fix #222 - Update `fast_regression()` and `fast_classification()` to drop NULL
+predictions.
+
 # tidyAML 0.0.4
 
 ## Breaking Changes
