@@ -1,3 +1,16 @@
+# tidyAML 0.0.6
+
+## Breaking Changes
+None
+
+## New Features
+1. Fix #242 - Add function `quantile_normalize()`.
+2. Fix #243 - Add function `check_duplicate_rows()`.
+3. Fix #248 - Add function `extract_tunable_params()`.
+
+## Minor Fixes and Improvements
+1. Fix #239 - Fix erroneous documentation for `plot_regression_predictions()`.
+
 # tidyAML 0.0.5
 
 ## Breaking Changes

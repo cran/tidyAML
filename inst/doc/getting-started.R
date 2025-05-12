@@ -5,11 +5,11 @@ knitr::opts_chunk$set(
 )
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  install.packages("tidyAML")
+# install.packages("tidyAML")
 
 ## ----warning=FALSE, message=FALSE, eval=FALSE---------------------------------
-#  # install.packages("devtools")
-#  devtools::install_github("spsanderson/tidyAML")
+# # install.packages("devtools")
+# devtools::install_github("spsanderson/tidyAML")
 
 ## ----example------------------------------------------------------------------
 library(tidyAML)
